@@ -1,0 +1,158 @@
+var EMPTY = 0, SNAKE = 1, FOOD = 2;
+var UP = 3, DOWN = 4, LEFT = 5, RIGHT = 6;
+var C = 26, R = 26;
+var Canvas, ctx, key, frames, scorecount;
+var KLEFT = 37, KUP = 38, KRIGHT = 39, KDOWN = 40;
+            
+var Grid = {
+    width : null, height : null, grid : null,
+    init : function(v, c, r) {
+        this.grid = [];
+        this.width = c;
+        this.height = r;
+        for(var i = 0; i < c; i++) {
+            this.grid.push([]);
+            for(var j = 0; j < r; j++) {
+                this.grid[i].push(v);
+            }
+        }
+    },
+    set : function(v, x, y) {
+        this.grid[x][y] = v;
+    },
+    get : function(x, y) {
+        return this.grid[x][y];
+    }
+};
+            
+var Snake = {
+    direction : null, tail : null, snake : null,
+    init : function(v, x, y) {
+        this.direction = v;
+        this.snake = [];
+        this.addpart(x, y);
+    }, 
+                
+    addpart : function(x, y) {
+        this.snake.unshift({x:x, y:y});
+        this.tail = this.snake[0];
+    },
+                
+    cutpart : function() {
+        return this.snake.pop();
+    }
+};
+            
+function setfoodposition() {
+    var emptyarr = [];
+    for(var i = 0; i < Grid.width; i++) {
+        for(var j = 0; j < Grid.height; j++) {
+            emptyarr.push({x:i, y:j});
+        }
+    }
+    var foodpos = emptyarr[Math.floor(Math.random() * emptyarr.length)];
+    Grid.set(FOOD, foodpos.x, foodpos.y);
+}
+            
+function main() {
+    Canvas = document.createElement('canvas');
+    Canvas.width = C * 20;
+    Canvas.height = R * 20;
+    ctx = Canvas.getContext('2d');
+    document.body.appendChild(Canvas);
+    key = {};
+    frames = 0;
+    scorecount = 0;
+    document.addEventListener("keydown", function(event) {
+        key[event.keyCode] = true;
+                    //console.log(event.keyCode);
+    });
+    document.addEventListener("keyup", function(event) {
+                    //console.log(event.keyCode);
+            delete key[event.keyCode];
+    });
+    init();
+    loop();
+}
+            
+function init() {
+    Grid.init(EMPTY, C, R);
+    var randompos = {
+        x : Math.floor(C / 2), 
+        y : R - 1, 
+    };
+    Snake.init(UP, randompos.x, randompos.y);
+    Grid.set(SNAKE, randompos.x, randompos.y);
+    setfoodposition();
+}
+            
+function update() {
+    frames++;
+    if(key[KLEFT] && Snake.direction != RIGHT) 
+        Snake.direction = LEFT;
+    if(key[KUP] && Snake.direction != DOWN) 
+        Snake.direction = UP;
+    if(key[KRIGHT] && Snake.direction != LEFT) 
+        Snake.direction = RIGHT;
+    if(key[KDOWN] && Snake.direction != UP) 
+        Snake.direction = DOWN;
+    
+    var tailx = Snake.tail.x;
+    var taily = Snake.tail.y;
+                //console.log(Snake.direction);
+    if(frames % 5 === 0) {
+        switch(Snake.direction) {
+            case UP : taily--; break;
+            case DOWN : taily++; break;
+            case LEFT : tailx--; break;
+            case RIGHT : tailx++; break;
+        }
+    }
+    if(tailx < 0 || taily < 0 || tailx > Grid.width - 1 || taily > Grid.height - 1) 
+        return init();
+    if(Grid.get(tailx, taily) === FOOD) {
+        var newhead = {x : tailx, y : taily};
+        setfoodposition();
+        scorecount++;
+                    //console.log(Snake.direction);        
+    } else {
+        var newhead = Snake.cutpart();
+        Grid.set(EMPTY, newhead.x, newhead.y);
+        newhead.x = tailx;
+        newhead.y = taily; 
+    }
+    Grid.set(SNAKE, newhead.x, newhead.y);
+    Snake.addpart(newhead.x, newhead.y);
+}
+            
+function loop() {
+    update();
+    paint();
+    window.requestAnimationFrame(loop, Canvas);
+}
+            
+function  paint() {
+    var cwidth = Canvas.width / Grid.width;
+    var cheight = Canvas.height / Grid.height;
+    for(var i = 0; i < Grid.width; i++) {
+        for(var j = 0; j < Grid.height; j++) {
+            switch(Grid.get(i, j)) {
+                case EMPTY : ctx.fillStyle = "azure";
+                             break;
+                case SNAKE : ctx.fillStyle = "green";
+                             break;
+                case FOOD : ctx.fillStyle = "red";
+                            break;
+            }
+            ctx.fillRect(cwidth * i, cheight * j, cwidth, cheight);
+        }
+    }
+    var score = "SCORE : " + scorecount;
+    ctx.fillStyle = "blue";
+    ctx.fillText(score, 10, Canvas.height - 10);
+} 
+
+document.getElementById('Go').onclick = (function() { 
+        document.getElementById('Go').style.display = "none";
+        main();
+});
