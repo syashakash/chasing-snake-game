@@ -4,6 +4,7 @@ html, body {
     text-align: center;
     overflow: hidden;
     font-family: fantasy;
+    background-color: rgba(4, 5,0);
 }
 canvas {
     display: block;
