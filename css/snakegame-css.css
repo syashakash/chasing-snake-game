@@ -1,13 +1,16 @@
+@import url('https://fonts.googleapis.com/css?family=Indie+Flower|VT323');
+
 html, body {
-    width : 100%;
+    width: 100%;
     height: 100%;
     text-align: center;
     overflow: hidden;
     font-family: fantasy;
-    background-color: rgba(4, 5,0);
+    background-color: rgb(200, 295, 90);
 }
+
 canvas {
-    display: block;
+    /*display: block;*/
     position: absolute;
     margin: auto;
     top: 0;
@@ -17,17 +20,57 @@ canvas {
     border: 1px solid #000;
 }
 
-#Go {
-    text-align: center;
-/*    margin: auto;*/
-    top: 50%;
-    left: 50%;
-    position: absolute;
-    padding: 5px 20px;
+#Go: hover {
+    /*transition: all 0.3s ease 0s;*/
+    background-color: #296332;
 }
 
-#intro {
-   text-align: center;
+#Go {
+    border-style: none;
+    margin: auto;
+    padding: 0.4em 2.0em;
+    background-position: center;
+    background-color: #45af34;
+    border-radius: 12%;
+    font-family: 'VT323', monospace;
+    font-size: 1.6em;
+}
+
+#text {
+    text-align: center;
     margin-top: 10%;
     margin-left: auto;
+    color: rgb(39, 71, 52);
+    font-family: 'Indie Flower', cursive;
+    font-size: 2em;
+}
+
+#pause {
+    top: 50%;
+    left: 6.5%;
+    text-align: center;
+    position: absolute;
+    background-position: center;
+    background-color: #45af34;
+    border-radius: 12%;
+    font-family: 'VT323', monospace;
+    border-style: none;
+    font-size: 1.2em;
+    padding: 0.45em 2.3em;
+    display: none;
+}
+
+#quit {
+  top: 50%;
+  right: 6.5%;
+  text-align: center;
+  position: absolute;
+  background-position: center;
+  background-color: #45af34;
+  border-radius: 12%;
+  font-family: 'VT323', monospace;
+  border-style: none;
+  font-size: 1.2em;
+  padding: 0.45em 2.3em;
+  display: none;
 }
