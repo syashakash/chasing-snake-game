@@ -13,6 +13,11 @@ var KLEFT = 37,
     KRIGHT = 39,
     KDOWN = 40;
 var PAUSE = 0;
+if (window.innerHeight > window.innerWidth){
+  var CELLSIZE = 0.0325 * window.innerWidth;
+}else {
+  var CELLSIZE = 0.0325 * window.innerHeight;
+}
 
 var Grid = {
     width: null,
@@ -79,13 +84,13 @@ function setfoodposition() {
 
 function main() {
     Canvas = document.createElement('canvas');
-    Canvas.width = C * 20;
-    Canvas.height = R * 20;
+    Canvas.width = C * CELLSIZE;
+    Canvas.height = R * CELLSIZE;
     ctx = Canvas.getContext('2d');
     document.body.appendChild(Canvas);
     key = {};
     frames = 0;
-    scorecount = 0;
+    // scorecount = 0;
     document.addEventListener("keydown", function(event) {
         key[event.keyCode] = true;
         //console.log(event.keyCode);
@@ -104,6 +109,7 @@ function init() {
         x: Math.floor(C / 2),
         y: R - 1,
     };
+    scorecount = 0;
     Snake.init(UP, randompos.x, randompos.y);
     Grid.set(SNAKE, randompos.x, randompos.y);
     var x = setfoodposition();
@@ -139,18 +145,20 @@ function update() {
                 break;
         }
     }
-    if (tailx < 0 || taily < 0 || tailx > Grid.width - 1 || taily > Grid.height - 1)
+    if (tailx < 0 || taily < 0 || tailx > Grid.width - 1 || taily > Grid.height - 1){
+        alert('Game Over!! Your score was ' + scorecount);
         return init();
+    }
     if (Grid.get(tailx, taily) === FOOD) {
         var newhead = {
             x: tailx,
             y: taily
         };
         var fx = setfoodposition();
-        console.log('food:' + fx.x + ':' + fx.y);
+        //console.log('food:' + fx.x + ':' + fx.y);
         scorecount++;
 
-        console.log(tailx + ":" + taily);
+        //console.log(tailx + ":" + taily);
         //console.log(Snake.direction);
     } else {
         var newhead = Snake.cutpart();
@@ -177,7 +185,7 @@ function paint() {
         for (var j = 0; j < Grid.height; j++) {
             switch (Grid.get(i, j)) {
                 case EMPTY:
-                    ctx.fillStyle = "azure";
+                    ctx.fillStyle = "#a1ed68";
                     break;
                 case SNAKE:
                     ctx.fillStyle = "green";
@@ -195,17 +203,25 @@ function paint() {
 }
 
 document.getElementById('Go').onclick = (function() {
-    document.getElementById('Go').style.display = "none";
+    document.getElementById('intro').style.display = "none";
     document.getElementById('pause').style.display = "block";
+    document.getElementById('quit').style.display = "block";
     main();
 });
 document.getElementById('pause').onclick = (function() {
   if(PAUSE === 0){
     PAUSE = 1;
-    this.innerHTML = "resume";
+    this.innerHTML = "Resume";
   }else {
     PAUSE = 0;
-    this.innerHTML = "pause";
+    this.innerHTML = "Pause";
     loop();
   }
+});
+document.getElementById('quit').onclick = (function () {
+  PAUSE = 1;
+  alert('Game Over!! Your score was ' + scorecount);
+  setTimeout(function(){
+    window.location.reload();
+  }, 100);
 });
